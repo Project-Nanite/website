@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 dark:bg-gray-900 text-white p-8 mt-8 border-t border-gray-700 dark:border-gray-600">
+    <footer className="bg-gray-800 text-white p-8 border-t border-gray-700">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -39,7 +39,7 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-gray-700 dark:border-gray-600 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
           <p>&copy; 2025 Nanite. All rights reserved.</p>
         </div>
       </div>

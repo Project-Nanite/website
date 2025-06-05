@@ -29,16 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning for next-themes */}
-      <body className={`${inter.className} flex flex-col min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300`}> {/* Added dark mode background and transition */}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+    <html lang="en">
+      <body className={`${inter.className} flex flex-col min-h-screen bg-white transition-colors duration-300`}>
+        <ThemeProvider>
           <Navbar />
-          <main className="flex-grow"> {/* Increased padding-top for new navbar height */}
+          <main className="flex-grow">
             {children}
           </main>
           <Footer />

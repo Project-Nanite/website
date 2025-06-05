@@ -59,9 +59,9 @@ export default function AboutPage() {
         <div className="absolute bottom-32 left-1/4 w-20 h-20 bg-amber-200 opacity-25 -rotate-12 animate-bounce" style={{clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '1s'}}></div>
         
         {/* Floating circles */}
-        <div className="absolute top-60 right-1/3 w-24 h-24 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute bottom-40 right-10 w-32 h-32 bg-gradient-to-br from-orange-200 to-amber-200 rounded-full opacity-15 animate-pulse"></div>
-        <div className="absolute top-1/3 left-1/2 w-16 h-16 bg-gradient-to-br from-amber-200 to-yellow-200 rounded-full opacity-25 animate-bounce"></div>
+        <div className="absolute top-60 right-1/3 w-24 h-24 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full opacity-20 animate-float"></div>
+        <div className="absolute bottom-40 right-10 w-32 h-32 bg-gradient-to-br from-orange-200 to-amber-200 rounded-full opacity-15 animate-float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/3 left-1/2 w-16 h-16 bg-gradient-to-br from-amber-200 to-yellow-200 rounded-full opacity-25 animate-float" style={{animationDelay: '3s'}}></div>
         
         {/* Gradient blobs */}
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full opacity-10 animate-pulse"></div>
@@ -208,6 +208,23 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }
