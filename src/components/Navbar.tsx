@@ -2,15 +2,24 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
 import DarkModeToggle from './DarkModeToggle';
-import WaitlistPopup from './WaitlistPopup';
 
-const Navbar = () => {
+interface NavbarProps {
+  onWaitlistOpen?: () => void;
+}
+
+interface NavItem {
+  href: string;
+  label: string;
+  external?: boolean;
+}
+
+const Navbar = ({ onWaitlistOpen }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -23,8 +32,9 @@ const Navbar = () => {
 
   const navItems = [
     { href: '/about', label: 'About' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/docs', label: 'Docs' },
+    { href: 'https://dev.to/nanite', label: 'Blog', external: true },
+    { href: 'http://docs.nanite.software/', label: 'Docs', external: true },
+    { href: '/ask-ai', label: 'Ask AI' },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -40,8 +50,14 @@ const Navbar = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl">
-                <span className="text-white text-xl font-bold">N</span>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl overflow-hidden">
+                <Image
+                  src="/nanite.png"
+                  alt="Nanite Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
             </div>
@@ -54,28 +70,37 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 group ${
-                  isActive(item.href)
-                    ? 'text-orange-600 dark:text-orange-400 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 shadow-md'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gradient-to-r hover:from-yellow-50/50 hover:to-orange-50/50 dark:hover:from-yellow-900/20 dark:hover:to-orange-900/20'
-                }`}
-              >
-                <span className="relative z-10">{item.label}</span>
-                {isActive(item.href) && (
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full animate-pulse"></div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isExternalLink = item.external;
+              const linkProps = isExternalLink 
+                ? { href: item.href, target: "_blank", rel: "noopener noreferrer" }
+                : { href: item.href };
+              
+              const LinkComponent = isExternalLink ? 'a' : Link;
+              
+              return (
+                <LinkComponent
+                  key={item.href}
+                  {...linkProps}
+                  className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 group ${
+                    !isExternalLink && isActive(item.href)
+                      ? 'text-orange-600 dark:text-orange-400 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 shadow-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gradient-to-r hover:from-yellow-50/50 hover:to-orange-50/50 dark:hover:from-yellow-900/20 dark:hover:to-orange-900/20'
+                  }`}
+                >
+                  <span className="relative z-10">{item.label}</span>
+                  {!isExternalLink && isActive(item.href) && (
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full animate-pulse"></div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </LinkComponent>
+              );
+            })}
             
             <div className="ml-6 flex items-center space-x-4">
               <DarkModeToggle />
               <button 
-                onClick={() => setIsWaitlistOpen(true)}
+                onClick={() => onWaitlistOpen?.()}
                 className="relative bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform overflow-hidden group"
               >
                 <span className="relative z-10 flex items-center gap-2">
@@ -112,23 +137,32 @@ const Navbar = () => {
         {isOpen && (
           <div className="md:hidden mt-6 pb-6 border-t border-gray-200/50 dark:border-gray-700/50">
             <div className="pt-6 space-y-3">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`block px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
-                    isActive(item.href)
-                      ? 'text-orange-600 dark:text-orange-400 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 shadow-md'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gradient-to-r hover:from-yellow-50/50 hover:to-orange-50/50 dark:hover:from-yellow-900/20 dark:hover:to-orange-900/20'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const isExternalLink = item.external;
+                const linkProps = isExternalLink 
+                  ? { href: item.href, target: "_blank", rel: "noopener noreferrer" }
+                  : { href: item.href };
+                
+                const LinkComponent = isExternalLink ? 'a' : Link;
+                
+                return (
+                  <LinkComponent
+                    key={item.href}
+                    {...linkProps}
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
+                      !isExternalLink && isActive(item.href)
+                        ? 'text-orange-600 dark:text-orange-400 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 shadow-md'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gradient-to-r hover:from-yellow-50/50 hover:to-orange-50/50 dark:hover:from-yellow-900/20 dark:hover:to-orange-900/20'
+                    }`}
+                  >
+                    {item.label}
+                  </LinkComponent>
+                );
+              })}
               <button 
                 onClick={() => {
-                  setIsWaitlistOpen(true);
+                  onWaitlistOpen?.();
                   setIsOpen(false);
                 }}
                 className="block w-full mt-6 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold px-6 py-4 rounded-xl text-center transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -142,12 +176,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-      
-      {/* Waitlist Popup */}
-      <WaitlistPopup 
-        isOpen={isWaitlistOpen} 
-        onClose={() => setIsWaitlistOpen(false)} 
-      />
     </nav>
   );
 };

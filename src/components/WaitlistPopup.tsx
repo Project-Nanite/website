@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { addToWaitlist, checkEmailExists } from '@/lib/supabase';
 
 interface WaitlistPopupProps {
   isOpen: boolean;
@@ -9,6 +10,8 @@ interface WaitlistPopupProps {
 
 export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [company, setCompany] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -20,6 +23,8 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
       document.body.style.overflow = 'unset';
       // Reset form when closed
       setEmail('');
+      setName('');
+      setCompany('');
       setIsSubmitted(false);
       setError('');
     }
@@ -40,14 +45,28 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
 
     setIsSubmitting(true);
     
-    // Simulate API call - replace with actual API endpoint
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+      // Check if email already exists
+      const emailExists = await checkEmailExists(email);
+      
+      if (emailExists) {
+        setError('This email is already on our waitlist!');
+        return;
+      }
+
+      // Add to waitlist
+      await addToWaitlist({
+        email,
+        name: name || undefined,
+        company: company || undefined,
+        use_case: 'AI Development', // Default value
+        experience_level: 'Mixed' // Default value
+      });
+
       setIsSubmitted(true);
-      // Here you would typically send the email to your backend/waitlist service
-      console.log('Waitlist signup:', email);
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
+    } catch (err: any) {
+      console.error('Waitlist signup error:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +75,7 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
@@ -64,7 +83,7 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
       />
       
       {/* Popup */}
-      <div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-200 dark:border-gray-700">
+      <div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-200 dark:border-gray-700 z-10">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -88,10 +107,10 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
 
         <div className="p-6">
           {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Email Address
+                  Email Address *
                 </label>
                 <input
                   type="email"
@@ -103,12 +122,45 @@ export default function WaitlistPopup({ isOpen, onClose }: WaitlistPopupProps) {
                   required
                   disabled={isSubmitting}
                 />
-                {error && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
-                )}
               </div>
 
-              <div className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+                  disabled={isSubmitting}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="company" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Company (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder="Your company"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+                  disabled={isSubmitting}
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800">
+                  <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                </div>
+              )}
+
+              <div className="space-y-4 pt-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}

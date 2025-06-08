@@ -684,34 +684,34 @@ export default function Home() {
       </section>
 
       {/* Video Demo Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-gray-100 via-white to-gray-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 text-gray-900 dark:text-white overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6">
               See Nanite in <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Action</span>
             </h2>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-gray-600 dark:text-gray-300">
               Experience the power of AI-native development workflows
             </p>
           </div>
           
           <div className="max-w-6xl mx-auto">
-            <div className="relative bg-gradient-to-br from-gray-800 to-slate-800 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden">
+            <div className="relative bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-slate-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden">
               {/* Video Header */}
-              <div className="flex items-center px-6 py-4 bg-gradient-to-r from-gray-700 to-slate-700 border-b border-gray-600">
+              <div className="flex items-center px-6 py-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-slate-700 border-b border-gray-300 dark:border-gray-600">
                 <div className="flex space-x-2">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 </div>
                 <div className="flex-1 text-center">
-                  <span className="text-gray-300 text-sm font-mono">nanite-demo.mp4</span>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm font-mono">nanite-demo.mp4</span>
                 </div>
-                <PlayCircle className="w-5 h-5 text-gray-400" />
+                <PlayCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </div>
               
               {/* Video Content */}
-              <div className="relative aspect-video bg-black">
+              <div className="relative aspect-video bg-gray-900 dark:bg-black">
                 <video 
                   className="w-full h-full object-cover"
                   controls
@@ -719,26 +719,26 @@ export default function Home() {
                   preload="metadata"
                 >
                   <source src="/demo.mp4" type="video/mp4" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-800">
                     <div className="text-center">
-                      <PlayCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-400">Video demo coming soon</p>
+                      <PlayCircle className="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400">Video demo coming soon</p>
                     </div>
                   </div>
                 </video>
                 
                 {/* Video Overlay for Demo Features */}
-                <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-200 dark:border-gray-600">
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-green-400 font-mono">Live Demo</span>
+                    <span className="text-green-600 dark:text-green-400 font-mono">Live Demo</span>
                   </div>
                 </div>
                 
                 {/* Demo Features List */}
-                <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg p-4 max-w-xs">
-                  <h4 className="text-sm font-semibold text-white mb-2">Featured in Demo:</h4>
-                  <ul className="text-xs text-gray-300 space-y-1">
+                <div className="absolute bottom-4 right-4 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg p-4 max-w-xs border border-gray-200 dark:border-gray-600">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Featured in Demo:</h4>
+                  <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3 h-3 text-green-400" />
                       Zero-setup AI environment
@@ -876,39 +876,21 @@ export default function Home() {
           </div>
           
           <div className="text-center mt-12">
-            <Link
-              href="/docs"
+            <a
+              href="http://docs.nanite.software/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-200"
             >
               <BookOpen className="w-5 h-5" />
               View Full Documentation
               <ChevronRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-yellow-600 to-orange-600 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-5xl font-black mb-8">
-            Ready to Transform Your AI Development?
-          </h2>
-          <p className="text-xl mb-12 max-w-2xl mx-auto opacity-90">
-            Join thousands of developers who are already building the future with Nanite. Get early access and be part of the revolution.
-          </p>
-          <button
-            onClick={() => setIsWaitlistOpen(true)}
-            className="inline-flex items-center gap-3 bg-white text-orange-600 font-bold px-12 py-4 rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 transform"
-          >
-            <Rocket className="w-5 h-5" />
-            Join Waitlist
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </div>
-      </section>
+     
       
       {/* Waitlist Popup */}
       <WaitlistPopup 

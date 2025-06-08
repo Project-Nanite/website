@@ -294,64 +294,63 @@ export default function AskAIPage() {
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-lg'
                   }`}
                 >
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code: ({ node, inline, className, children, ...props }: any) => {
-                          return inline ? (
-                            <code className={`px-1.5 py-0.5 rounded text-sm font-mono ${
-                              message.role === 'user' 
-                                ? 'bg-white/20 text-white' 
-                                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                            }`} {...props}>
-                              {children}
-                            </code>
-                          ) : (
-                            <pre className={`p-3 rounded-lg overflow-x-auto my-2 ${
-                              message.role === 'user'
-                                ? 'bg-white/20'
-                                : 'bg-gray-200 dark:bg-gray-700'
-                            }`}>
-                              <code className="text-sm font-mono" {...props}>{children}</code>
-                            </pre>
-                          );
-                        },
-                        p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                        ul: ({ children }: any) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                        ol: ({ children }: any) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                        li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
-                        h1: ({ children }: any) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                        h2: ({ children }: any) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-                        h3: ({ children }: any) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-                        blockquote: ({ children }: any) => (
-                          <blockquote className={`border-l-4 pl-4 italic my-2 ${
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    className="prose prose-sm max-w-none dark:prose-invert"
+                    components={{
+                      code: ({ node, inline, className, children, ...props }) => {
+                        return inline ? (
+                          <code className={`px-1.5 py-0.5 rounded text-sm font-mono ${
                             message.role === 'user' 
-                              ? 'border-white/30' 
-                              : 'border-gray-400 dark:border-gray-600'
+                              ? 'bg-white/20 text-white' 
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                          }`} {...props}>
+                            {children}
+                          </code>
+                        ) : (
+                          <pre className={`p-3 rounded-lg overflow-x-auto my-2 ${
+                            message.role === 'user'
+                              ? 'bg-white/20'
+                              : 'bg-gray-200 dark:bg-gray-700'
                           }`}>
-                            {children}
-                          </blockquote>
-                        ),
-                        a: ({ children, href }: any) => (
-                          <a 
-                            href={href} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className={`underline hover:no-underline ${
-                              message.role === 'user' 
-                                ? 'text-white/90 hover:text-white' 
-                                : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300'
-                            }`}
-                          >
-                            {children}
-                          </a>
-                        ),
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  </div>
+                            <code className="text-sm font-mono" {...props}>{children}</code>
+                          </pre>
+                        );
+                      },
+                      p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                      h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
+                      blockquote: ({ children }) => (
+                        <blockquote className={`border-l-4 pl-4 italic my-2 ${
+                          message.role === 'user' 
+                            ? 'border-white/30' 
+                            : 'border-gray-400 dark:border-gray-600'
+                        }`}>
+                          {children}
+                        </blockquote>
+                      ),
+                      a: ({ children, href }) => (
+                        <a 
+                          href={href} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={`underline hover:no-underline ${
+                            message.role === 'user' 
+                              ? 'text-white/90 hover:text-white' 
+                              : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300'
+                          }`}
+                        >
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
                   <div className={`text-xs mt-2 ${
                     message.role === 'user' ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'
                   }`}>
@@ -374,30 +373,29 @@ export default function AskAIPage() {
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="max-w-[75%] px-4 py-3 rounded-2xl rounded-bl-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm">
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code: ({ node, inline, className, children, ...props }: any) => {
-                          return inline ? (
-                            <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
-                              {children}
-                            </code>
-                          ) : (
-                            <pre className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg overflow-x-auto my-2">
-                              <code className="text-sm font-mono" {...props}>{children}</code>
-                            </pre>
-                          );
-                        },
-                        p: ({ children }: any) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                        ul: ({ children }: any) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                        ol: ({ children }: any) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                        li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
-                      }}
-                    >
-                      {currentResponse}
-                    </ReactMarkdown>
-                  </div>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    className="prose prose-sm max-w-none dark:prose-invert"
+                    components={{
+                      code: ({ node, inline, className, children, ...props }) => {
+                        return inline ? (
+                          <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                            {children}
+                          </code>
+                        ) : (
+                          <pre className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg overflow-x-auto my-2">
+                            <code className="text-sm font-mono" {...props}>{children}</code>
+                          </pre>
+                        );
+                      },
+                      p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                    }}
+                  >
+                    {currentResponse}
+                  </ReactMarkdown>
                   <div className="inline-flex items-center gap-1 mt-2">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
                     <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse delay-100"></div>
