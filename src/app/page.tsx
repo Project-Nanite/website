@@ -280,13 +280,7 @@ export default function Home() {
             {/* Status Badge */}
             <div className="mb-12">
               <div className="flex justify-center">
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30 text-yellow-800 dark:text-yellow-300 px-6 py-3 rounded-full border border-yellow-200 dark:border-yellow-700 animate-shimmer">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold">Currently in Beta • Join Early Access</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </div>
+               
               </div>
             </div>
 

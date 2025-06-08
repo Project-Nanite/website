@@ -124,7 +124,7 @@ export default function About() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 dark:from-yellow-500/5 dark:to-orange-500/5"></div>
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6 lg:px-12 xl:px-16 relative z-10">
           <div className="text-center mb-16">
             <h1 className={`text-6xl md:text-7xl font-bold text-gray-900 dark:text-white mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               About <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Nanite</span>
@@ -161,37 +161,9 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-20 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Our <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Journey</span>
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">Key milestones in our mission</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {milestones.map((milestone, index) => (
-              <div
-                key={milestone.year + milestone.title}
-                className={`text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${600 + index * 100}ms` }}
-              >
-                <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-xl px-6 py-3 rounded-full inline-block mb-4">
-                  {milestone.year}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{milestone.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{milestone.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* System Architecture */}
       <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 lg:px-12 xl:px-16">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               Built on <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Solid Foundations</span>
@@ -325,7 +297,7 @@ export default function About() {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      {/* <section className="py-20 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
@@ -361,7 +333,7 @@ export default function About() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

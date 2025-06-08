@@ -65,12 +65,7 @@ const Footer = () => {
                   <FileText className="w-3 h-3" />
                 </a>
               </li>
-              <li>
-                <a href="http://docs.nanite.software/" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors duration-200 flex items-center gap-1">
-                  Docs
-                  <BookOpen className="w-3 h-3" />
-                </a>
-              </li>
+              
             </ul>
           </div>
         </div>
