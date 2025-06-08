@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Brain, Code, Database, Cpu, Terminal, Lightbulb, MessageCircle, Zap, ArrowRight, ChevronUp, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 
 interface Message {
   id: string;
@@ -294,63 +295,66 @@ export default function AskAIPage() {
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-lg'
                   }`}
                 >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    className="prose prose-sm max-w-none dark:prose-invert"
-                    components={{
-                      code: ({ node, inline, className, children, ...props }) => {
-                        return inline ? (
-                          <code className={`px-1.5 py-0.5 rounded text-sm font-mono ${
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code: ({ children, className, ...props }) => {
+                          const match = /language-(\w+)/.exec(className || '');
+                          const isInline = !match;
+                          return isInline ? (
+                            <code className={`px-1.5 py-0.5 rounded text-sm font-mono ${
+                              message.role === 'user' 
+                                ? 'bg-white/20 text-white' 
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                            }`} {...props}>
+                              {children}
+                            </code>
+                          ) : (
+                            <pre className={`p-3 rounded-lg overflow-x-auto my-2 ${
+                              message.role === 'user'
+                                ? 'bg-white/20'
+                                : 'bg-gray-200 dark:bg-gray-700'
+                            }`}>
+                              <code className="text-sm font-mono" {...props}>{children}</code>
+                            </pre>
+                          );
+                        },
+                        p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                        h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
+                        blockquote: ({ children }) => (
+                          <blockquote className={`border-l-4 pl-4 italic my-2 ${
                             message.role === 'user' 
-                              ? 'bg-white/20 text-white' 
-                              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                          }`} {...props}>
-                            {children}
-                          </code>
-                        ) : (
-                          <pre className={`p-3 rounded-lg overflow-x-auto my-2 ${
-                            message.role === 'user'
-                              ? 'bg-white/20'
-                              : 'bg-gray-200 dark:bg-gray-700'
+                              ? 'border-white/30' 
+                              : 'border-gray-400 dark:border-gray-600'
                           }`}>
-                            <code className="text-sm font-mono" {...props}>{children}</code>
-                          </pre>
-                        );
-                      },
-                      p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                      ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                      h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                      h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-                      h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-                      blockquote: ({ children }) => (
-                        <blockquote className={`border-l-4 pl-4 italic my-2 ${
-                          message.role === 'user' 
-                            ? 'border-white/30' 
-                            : 'border-gray-400 dark:border-gray-600'
-                        }`}>
-                          {children}
-                        </blockquote>
-                      ),
-                      a: ({ children, href }) => (
-                        <a 
-                          href={href} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className={`underline hover:no-underline ${
-                            message.role === 'user' 
-                              ? 'text-white/90 hover:text-white' 
-                              : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300'
-                          }`}
-                        >
-                          {children}
-                        </a>
-                      ),
-                    }}
+                            {children}
+                          </blockquote>
+                        ),
+                        a: ({ children, href }) => (
+                          <a 
+                            href={href} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className={`underline hover:no-underline ${
+                              message.role === 'user' 
+                                ? 'text-white/90 hover:text-white' 
+                                : 'text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300'
+                            }`}
+                          >
+                            {children}
+                          </a>
+                        ),
+                      } as Components}
                   >
                     {message.content}
                   </ReactMarkdown>
+                  </div>
                   <div className={`text-xs mt-2 ${
                     message.role === 'user' ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'
                   }`}>
@@ -373,29 +377,32 @@ export default function AskAIPage() {
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="max-w-[75%] px-4 py-3 rounded-2xl rounded-bl-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    className="prose prose-sm max-w-none dark:prose-invert"
-                    components={{
-                      code: ({ node, inline, className, children, ...props }) => {
-                        return inline ? (
-                          <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
-                            {children}
-                          </code>
-                        ) : (
-                          <pre className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg overflow-x-auto my-2">
-                            <code className="text-sm font-mono" {...props}>{children}</code>
-                          </pre>
-                        );
-                      },
-                      p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                      ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                      ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                    }}
+                  <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code: ({ children, className, ...props }) => {
+                          const match = /language-(\w+)/.exec(className || '');
+                          const isInline = !match;
+                          return isInline ? (
+                            <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                              {children}
+                            </code>
+                          ) : (
+                            <pre className="bg-gray-200 dark:bg-gray-700 p-3 rounded-lg overflow-x-auto my-2">
+                              <code className="text-sm font-mono" {...props}>{children}</code>
+                            </pre>
+                          );
+                        },
+                        p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                      } as Components}
                   >
                     {currentResponse}
                   </ReactMarkdown>
+                  </div>
                   <div className="inline-flex items-center gap-1 mt-2">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
                     <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse delay-100"></div>
