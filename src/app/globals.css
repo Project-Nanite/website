@@ -43,6 +43,28 @@
   }
 }
 
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -59,6 +81,14 @@
   animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.animate-stagger-fade-in {
+  animation: stagger-fade-in 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
 .bg-300\% {
   background-size: 300% 300%;
 }
@@ -66,4 +96,15 @@
 body {
   /* You can add base body styles here if needed, Tailwind will handle dark mode */
   @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced scroll behavior for better UX */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }

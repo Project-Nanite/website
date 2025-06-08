@@ -44,6 +44,8 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const [showScrollTop, setShowScrollTop] = useState(false);
   
   const stats = [
     { label: 'Developers Waitlisted', value: '2.5K+', delay: 0 },
@@ -51,6 +53,84 @@ export default function Home() {
     { label: 'Boot to Code Time', value: '< 5min', delay: 200 },
     { label: 'System Stability', value: '99.9%', delay: 300 },
   ];
+
+  // Intersection Observer for section animations
+  useEffect(() => {
+    setIsVisible(true);
+    
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setVisibleSections(prev => new Set([...prev, entry.target.id]));
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, {
+      threshold: 0.1,
+      rootMargin: '50px 0px -50px 0px'
+    });
+
+    // Observe all sections
+    const sections = document.querySelectorAll('section[id]');
+    sections.forEach(section => observer.observe(section));
+
+    // Handle scroll for scroll-to-top button
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Helper function to check if section is visible
+  const isSectionVisible = (sectionId: string) => visibleSections.has(sectionId);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  // Set dynamic SEO metadata
+  useEffect(() => {
+    // Update document title and meta description
+    document.title = 'Nanite - Revolutionary AI Development OS';
+    
+    const existingDescription = document.querySelector('meta[name="description"]');
+    if (existingDescription) {
+      existingDescription.setAttribute('content', 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.';
+      document.head.appendChild(meta);
+    }
+
+    // Update Open Graph meta tags
+    const updateOGMeta = (property: string, content: string) => {
+      let metaTag = document.querySelector(`meta[property="${property}"]`);
+      if (metaTag) {
+        metaTag.setAttribute('content', content);
+      } else {
+        metaTag = document.createElement('meta');
+        metaTag.setAttribute('property', property);
+        metaTag.setAttribute('content', content);
+        document.head.appendChild(metaTag);
+      }
+    };
+
+    updateOGMeta('og:title', 'Nanite - Revolutionary AI Development OS');
+    updateOGMeta('og:description', 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.');
+    updateOGMeta('og:type', 'website');
+  }, []);
 
 
 
@@ -219,45 +299,10 @@ export default function Home() {
     }
   };
 
-  // Set dynamic SEO metadata
-  useEffect(() => {
-    setIsVisible(true);
-    
-    // Update document title and meta description
-    document.title = 'Nanite - Revolutionary AI Development OS';
-    
-    const existingDescription = document.querySelector('meta[name="description"]');
-    if (existingDescription) {
-      existingDescription.setAttribute('content', 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.';
-      document.head.appendChild(meta);
-    }
-
-    // Update Open Graph meta tags
-    const updateOGMeta = (property: string, content: string) => {
-      let metaTag = document.querySelector(`meta[property="${property}"]`);
-      if (metaTag) {
-        metaTag.setAttribute('content', content);
-      } else {
-        metaTag = document.createElement('meta');
-        metaTag.setAttribute('property', property);
-        metaTag.setAttribute('content', content);
-        document.head.appendChild(metaTag);
-      }
-    };
-
-    updateOGMeta('og:title', 'Nanite - Revolutionary AI Development OS');
-    updateOGMeta('og:description', 'Experience the future of AI development with Nanite OS. Revolutionary tools, intelligent assistance, and streamlined workflows for next-generation artificial intelligence projects.');
-    updateOGMeta('og:type', 'website');
-  }, []);
-
   return (
     <div className="overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
+      <section id="hero" className="relative min-h-screen flex items-center justify-center">
         {/* Enhanced Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full animate-pulse"></div>
@@ -411,10 +456,10 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl font-black text-gray-900 dark:text-white mb-6">
+      <section id="features" className="py-24 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className={`text-center mb-20 transition-all duration-1000 ${isSectionVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6">
               Why Developers Choose
               <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent"> Nanite</span>
             </h2>
@@ -427,7 +472,10 @@ export default function Home() {
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group relative p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 overflow-hidden"
+                className={`group relative p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 overflow-hidden ${
+                  isSectionVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+                style={{ transitionDelay: `${300 + index * 100}ms` }}
               >
                 <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                 
@@ -450,7 +498,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Testimonials Section  
       <section className="py-24 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-900">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
@@ -483,63 +531,122 @@ export default function Home() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Supported by Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+      <section id="supported-by" className="py-24 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+        {/* Background Animation Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-40 h-40 bg-gradient-to-r from-orange-400/10 to-amber-400/10 rounded-full animate-pulse" style={{animationDelay: '1000ms'}}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-yellow-400/5 to-orange-400/5 rounded-full animate-spin" style={{ animationDuration: '30s' }}></div>
+        </div>
+
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl relative z-10">
+          <div className="text-center mb-20">
+            <div className={`inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30 px-4 py-2 rounded-full border border-yellow-200 dark:border-yellow-800 mb-6 transition-all duration-1000 ${isSectionVisible('supported-by') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div className="w-2 h-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">Powered by Industry Leaders</span>
+            </div>
+            
+            <h2 className={`text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 transition-all duration-1000 delay-200 ${isSectionVisible('supported-by') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               Built with <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Industry Standards</span>
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Powered by the most trusted frameworks and technologies in AI development
+            <p className={`text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-all duration-1000 delay-400 ${isSectionVisible('supported-by') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              Powered by the most trusted frameworks and technologies in AI development, ensuring reliability and performance at scale
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-60 hover:opacity-100 transition-opacity duration-300">
-            {[
-              { name: 'Debian', logo: '/icons/debian.png' },
-              { name: 'PyTorch', logo: '/icons/pytorch.png' },
-              { name: 'TensorFlow', logo: '/icons/tensorflow.png' },
-              { name: 'Docker', logo: '/icons/docker.png' },
-              { name: 'CUDA', icon: Cpu },
-              { name: 'Jupyter', logo: '/icons/jupyter.png' }
-            ].map((tech, index) => {
-              const hasLogo = 'logo' in tech && tech.logo;
-              const hasIcon = 'icon' in tech && tech.icon;
-              
-              return (
-                <div
-                  key={tech.name}
-                  className="flex flex-col items-center justify-center p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 group"
-                >
-                  <div className="mb-2 group-hover:scale-110 transition-transform duration-300">
-                    {hasLogo ? (
-                      <Image
-                        src={tech.logo}
-                        alt={`${tech.name} logo`}
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 object-contain"
-                      />
-                    ) : hasIcon ? (
-                      <tech.icon className="w-10 h-10 text-orange-500" />
-                    ) : null}
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8">
+              {[
+                { name: 'Debian', logo: '/icons/debian.png', description: 'Stable Linux foundation' },
+                { name: 'PyTorch', logo: '/icons/pytorch.png', description: 'Deep learning framework' },
+                { name: 'TensorFlow', logo: '/icons/tensorflow.png', description: 'ML platform' },
+                { name: 'Docker', logo: '/icons/docker.png', description: 'Containerization' },
+                { name: 'CUDA', icon: Cpu, description: 'GPU acceleration' },
+                { name: 'Jupyter', logo: '/icons/jupyter.png', description: 'Interactive computing' }
+              ].map((tech, index) => {
+                const hasLogo = 'logo' in tech && tech.logo;
+                const hasIcon = 'icon' in tech && tech.icon;
+                
+                return (
+                  <div
+                    key={tech.name}
+                    className={`group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden ${
+                      isSectionVisible('supported-by') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    }`}
+                    style={{ transitionDelay: `${600 + index * 100}ms` }}
+                  >
+                    {/* Gradient Background Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    {/* Floating Glow Effect */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-500"></div>
+                    
+                    <div className="relative z-10 flex flex-col items-center text-center">
+                      <div className="mb-4 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                        {hasLogo ? (
+                          <div className="relative">
+                            <Image
+                              src={tech.logo}
+                              alt={`${tech.name} logo`}
+                              width={48}
+                              height={48}
+                              className="w-12 h-12 object-contain filter group-hover:brightness-110 transition-all duration-300"
+                            />
+                            {/* Subtle glow effect for logos */}
+                            <div className="absolute inset-0 w-12 h-12 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                          </div>
+                        ) : hasIcon ? (
+                          <div className="relative">
+                            <tech.icon className="w-12 h-12 text-orange-500 group-hover:text-orange-400 transition-colors duration-300" />
+                            <div className="absolute inset-0 w-12 h-12 bg-orange-400/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                          </div>
+                        ) : null}
+                      </div>
+                      
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-300">
+                        {tech.name}
+                      </h3>
+                      
+                      <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        {tech.description}
+                      </p>
+                    </div>
+                    
+                    {/* Bottom gradient accent */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 to-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                   </div>
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                    {tech.name}
-                  </span>
+                );
+              })}
+            </div>
+            
+            {/* Trust Indicators */}
+            <div className={`mt-16 text-center transition-all duration-1000 delay-1000 ${isSectionVisible('supported-by') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-6 border border-yellow-200/50 dark:border-yellow-800/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Production Ready</span>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" style={{animationDelay: '500ms'}}></div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Enterprise Grade</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style={{animationDelay: '1000ms'}}></div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Open Source</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Terminal Demo Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
+      <section id="terminal-demo" className="py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className={`text-center mb-16 transition-all duration-1000 ${isSectionVisible('terminal-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6">
               Experience the Power of <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Nanite</span>
             </h2>
@@ -550,7 +657,7 @@ export default function Home() {
           
           <div className="max-w-5xl mx-auto">
             {/* Terminal Window */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className={`bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-1000 delay-300 ${isSectionVisible('terminal-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-b border-gray-300 dark:border-gray-600">
                 <div className="flex items-center space-x-3">
@@ -581,54 +688,55 @@ export default function Home() {
                   {/* Create Project */}
                   <div className="mt-6">
                     <div className="text-green-400">
-                      <span className="text-gray-500">$</span> nanite create my-ai-project
+                      <span className="text-gray-500">$</span> nanite create my-vision-project --template computer-vision
                     </div>
                     <div className="text-gray-300 pl-2 mt-1">
-                      <div className="text-yellow-400">✨ Creating new AI project...</div>
-                      <div className="text-blue-400">📦 Setting up environment...</div>
-                      <div className="text-green-400">✅ Project created successfully!</div>
+                      <div className="text-yellow-400">✨ Creating computer vision project...</div>
+                      <div className="text-blue-400">📦 Setting up YOLO, OpenCV, PyTorch...</div>
+                      <div className="text-green-400">✅ Project created in 45 seconds!</div>
                     </div>
                   </div>
                   
                   {/* Install Dependencies */}
                   <div className="mt-6">
                     <div className="text-green-400">
-                      <span className="text-gray-500">$</span> cd my-ai-project && nanite install torch transformers
+                      <span className="text-gray-500">$</span> cd my-vision-project && nanite install ultralytics opencv-python
                     </div>
                     <div className="text-gray-300 pl-2 mt-1">
-                      <div className="text-blue-400">🔄 Installing dependencies...</div>
-                      <div className="text-gray-400">  ├── torch@2.1.0</div>
-                      <div className="text-gray-400">  └── transformers@4.35.0</div>
-                      <div className="text-green-400">✅ Dependencies installed in 12.3s</div>
+                      <div className="text-blue-400">🔄 Installing optimized packages...</div>
+                      <div className="text-gray-400">  ├── ultralytics@8.1.0 (GPU optimized)</div>
+                      <div className="text-gray-400">  └── opencv-python@4.8.1 (CUDA enabled)</div>
+                      <div className="text-green-400">✅ Dependencies installed in 8.7s</div>
                     </div>
                   </div>
                   
                   {/* Run Model */}
                   <div className="mt-6">
                     <div className="text-green-400">
-                      <span className="text-gray-500">$</span> nanite run --model llama2 --prompt "Hello, AI!"
+                      <span className="text-gray-500">$</span> nanite run --model yolov8n --input camera --display
                     </div>
                     <div className="text-gray-300 pl-2 mt-1">
-                      <div className="text-yellow-400">🚀 Loading model: llama2-7b...</div>
-                      <div className="text-blue-400">💾 Memory usage: 6.2GB / 16GB</div>
-                      <div className="text-purple-400">🔮 Generating response...</div>
+                      <div className="text-yellow-400">🚀 Loading YOLOv8 nano model...</div>
+                      <div className="text-blue-400">📹 Camera input detected: /dev/video0</div>
+                      <div className="text-purple-400">🎯 Real-time object detection active</div>
                       <div className="text-white bg-gray-800 p-3 rounded mt-2">
-                        Hello! I'm here to help you with your AI development needs. 
-                        Nanite makes it incredibly easy to work with language models!
+                        Detected: person (0.92), car (0.85), dog (0.78)
+                        FPS: 60 | GPU Memory: 2.1GB/8GB | Inference: 12ms
                       </div>
-                      <div className="text-green-400 mt-1">✅ Response generated in 1.2s</div>
+                      <div className="text-green-400 mt-1">✅ Running at 60 FPS on RTX 4070</div>
                     </div>
                   </div>
                   
                   {/* Deploy */}
                   <div className="mt-6">
                     <div className="text-green-400">
-                      <span className="text-gray-500">$</span> nanite deploy --cloud
+                      <span className="text-gray-500">$</span> nanite deploy --edge --optimize
                     </div>
                     <div className="text-gray-300 pl-2 mt-1">
-                      <div className="text-blue-400">☁️  Deploying to Nanite Cloud...</div>
-                      <div className="text-yellow-400">📡 Setting up inference endpoint...</div>
-                      <div className="text-green-400">✅ Deployed at: https://my-ai-project.nanite.app</div>
+                      <div className="text-blue-400">☁️  Optimizing model for edge deployment...</div>
+                      <div className="text-yellow-400">⚡ TensorRT optimization complete</div>
+                      <div className="text-green-400">🚀 Deployed at: https://vision-api.nanite.app</div>
+                      <div className="text-cyan-400">📊 Edge latency: ~3ms | 99.9% uptime</div>
                     </div>
                   </div>
                   
@@ -642,8 +750,8 @@ export default function Home() {
             </div>
             
             {/* Terminal Features */}
-            <div className="grid md:grid-cols-3 gap-6 mt-12">
-              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className={`grid md:grid-cols-3 gap-6 mt-12 transition-all duration-1000 delay-600 ${isSectionVisible('terminal-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
@@ -653,7 +761,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Cpu className="w-6 h-6 text-white" />
                 </div>
@@ -663,7 +771,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Cloud className="w-6 h-6 text-white" />
                 </div>
@@ -678,9 +786,9 @@ export default function Home() {
       </section>
 
       {/* Video Demo Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-100 via-white to-gray-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 text-gray-900 dark:text-white overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
+      <section id="video-demo" className="py-20 bg-gradient-to-br from-gray-100 via-white to-gray-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 text-gray-900 dark:text-white overflow-hidden">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className={`text-center mb-16 transition-all duration-1000 ${isSectionVisible('video-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h2 className="text-4xl font-bold mb-6">
               See Nanite in <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Action</span>
             </h2>
@@ -690,7 +798,7 @@ export default function Home() {
           </div>
           
           <div className="max-w-6xl mx-auto">
-            <div className="relative bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-slate-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden">
+            <div className={`relative bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-slate-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden transition-all duration-1000 delay-300 ${isSectionVisible('video-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               {/* Video Header */}
               <div className="flex items-center px-6 py-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-slate-700 border-b border-gray-300 dark:border-gray-600">
                 <div className="flex space-x-2">
@@ -754,7 +862,7 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="text-center mt-8">
+            <div className={`text-center mt-8 transition-all duration-1000 delay-600 ${isSectionVisible('video-demo') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="inline-flex flex-col sm:flex-row gap-4">
                 <button 
                   onClick={() => setIsWaitlistOpen(true)}
@@ -773,9 +881,9 @@ export default function Home() {
 
 
       {/* Performance Benchmarks Section */}
-      <section className="py-20 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
+      <section id="performance" className="py-20 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-900">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className={`text-center mb-16 transition-all duration-1000 ${isSectionVisible('performance') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Performance</span> That Speaks
             </h2>
@@ -788,8 +896,8 @@ export default function Home() {
             {benchmarks.map((benchmark, index) => (
               <div
                 key={benchmark.metric}
-                className={`bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${1200 + index * 100}ms` }}
+                className={`bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 text-center transition-all duration-700 hover:shadow-xl hover:-translate-y-1 ${isSectionVisible('performance') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                style={{ transitionDelay: `${300 + index * 100}ms` }}
               >
                 <div className="mb-4">
                   <benchmark.icon className="w-12 h-12 text-orange-500 mx-auto" />
@@ -798,15 +906,15 @@ export default function Home() {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">Traditional:</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Traditional:</span>
                     <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{benchmark.traditional}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">Nanite:</span>
-                    <span className="text-sm font-semibold text-orange-600">{benchmark.nanite}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Nanite:</span>
+                    <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">{benchmark.nanite}</span>
                   </div>
                   <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
-                    <span className="inline-flex items-center gap-1 text-green-600 font-bold text-sm">
+                    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-bold text-sm">
                       <TrendingUp className="w-4 h-4" />
                       {benchmark.improvement}
                     </span>
@@ -816,7 +924,7 @@ export default function Home() {
             ))}
           </div>
           
-          <div className="text-center mt-12">
+          <div className={`text-center mt-12 transition-all duration-1000 delay-700 ${isSectionVisible('performance') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               * Benchmarks based on real-world AI development scenarios. Results may vary by hardware configuration.
             </p>
@@ -825,9 +933,9 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
+      <section id="faq" className="py-20 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+          <div className={`text-center mb-16 transition-all duration-1000 ${isSectionVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Questions</span>
             </h2>
@@ -840,7 +948,8 @@ export default function Home() {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="mb-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                className={`mb-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-700 hover:shadow-lg ${isSectionVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                style={{ transitionDelay: `${300 + index * 100}ms` }}
               >
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
@@ -869,12 +978,12 @@ export default function Home() {
             ))}
           </div>
           
-          <div className="text-center mt-12">
+          <div className={`text-center mt-12 transition-all duration-1000 delay-800 ${isSectionVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <a
               href="http://docs.nanite.software/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-200"
+              className="inline-flex items-center gap-3 text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-200 hover:scale-105 transform"
             >
               <BookOpen className="w-5 h-5" />
               View Full Documentation
@@ -891,6 +1000,17 @@ export default function Home() {
         isOpen={isWaitlistOpen} 
         onClose={() => setIsWaitlistOpen(false)} 
       />
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" />
+        </button>
+      )}
     </div>
   );
 }
