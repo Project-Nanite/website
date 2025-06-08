@@ -279,7 +279,15 @@ export default function Home() {
             
             {/* Status Badge */}
             <div className="mb-12">
-               
+              <div className="flex justify-center">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30 text-yellow-800 dark:text-yellow-300 px-6 py-3 rounded-full border border-yellow-200 dark:border-yellow-700 animate-shimmer">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-semibold">Currently in Beta • Join Early Access</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             {/* Hero Content with Background Image */}
@@ -496,25 +504,40 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-60 hover:opacity-100 transition-opacity duration-300">
             {[
-              { name: 'Debian', icon: Server },
-              { name: 'PyTorch', icon: Zap },
-              { name: 'TensorFlow', icon: Brain },
-              { name: 'Docker', icon: Package },
+              { name: 'Debian', logo: '/icons/debian.png' },
+              { name: 'PyTorch', logo: '/icons/pytorch.png' },
+              { name: 'TensorFlow', logo: '/icons/tensorflow.png' },
+              { name: 'Docker', logo: '/icons/docker.png' },
               { name: 'CUDA', icon: Cpu },
-              { name: 'Jupyter', icon: Code }
-            ].map((tech, index) => (
-              <div
-                key={tech.name}
-                className="flex flex-col items-center justify-center p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 group"
-              >
-                <div className="mb-2 group-hover:scale-110 transition-transform duration-300">
-                  <tech.icon className="w-10 h-10 text-orange-500" />
+              { name: 'Jupyter', logo: '/icons/jupyter.png' }
+            ].map((tech, index) => {
+              const hasLogo = 'logo' in tech && tech.logo;
+              const hasIcon = 'icon' in tech && tech.icon;
+              
+              return (
+                <div
+                  key={tech.name}
+                  className="flex flex-col items-center justify-center p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 group"
+                >
+                  <div className="mb-2 group-hover:scale-110 transition-transform duration-300">
+                    {hasLogo ? (
+                      <Image
+                        src={tech.logo}
+                        alt={`${tech.name} logo`}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 object-contain"
+                      />
+                    ) : hasIcon ? (
+                      <tech.icon className="w-10 h-10 text-orange-500" />
+                    ) : null}
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    {tech.name}
+                  </span>
                 </div>
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {tech.name}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

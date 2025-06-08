@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Providers } from "./providers";
+import LayoutClient from "@/components/LayoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,9 +27,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}>
         <Providers>
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <LayoutClient>{children}</LayoutClient>
         </Providers>
       </body>
     </html>
